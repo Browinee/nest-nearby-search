@@ -38,4 +38,22 @@ export class RedisService {
     }
     return list;
   }
+  async geoSearch(key: string, position: [number, number], radius: number) {
+    const positions = await this.redisClient.geoRadius(
+      key,
+      {
+        longitude: position[0],
+        latitude: position[1],
+      },
+      radius,
+      'km',
+    );
+    const list = [];
+    for (let i = 0; i < positions.length; i++) {
+      const pos = positions[i];
+      const res = await this.geoPos(key, pos);
+      list.push(res);
+    }
+    return list;
+  }
 }

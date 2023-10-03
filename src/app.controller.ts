@@ -43,4 +43,24 @@ export class AppController {
   async getPosition(@Query('name') name: string) {
     return this.redisService.geoPos('positions', name);
   }
+
+  @Get('nearbySearch')
+  async nearbySearch(
+    @Query('longitude') longitude: number,
+    @Query('latitude') latitude: number,
+    @Query('radius') radius: number,
+  ) {
+    if (!longitude || !latitude) {
+      throw new BadRequestException('wrong position info');
+    }
+    if (!radius) {
+      throw new BadRequestException('radius is missing.');
+    }
+
+    return this.redisService.geoSearch(
+      'positions',
+      [longitude, latitude],
+      radius,
+    );
+  }
 }
